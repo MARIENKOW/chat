@@ -3,7 +3,7 @@ import $api, { API_URL } from '../http/index.js';
 export default class AuthService {
    static async signIn(value){
       const res = await $api.post('/signIn',value)
-      const {accessToken,user} = res.data
+      const {accessToken} = res.data
       localStorage.setItem('accessToken',accessToken)
       return res
    }
@@ -11,8 +11,13 @@ export default class AuthService {
       const ans =await $api.post('/signUp',value)
       return ans
    }
+   static async rememberPassword(value){
+      const ans =await $api.post('/rememberPassword',value)
+      return ans
+   }
    static async logOut(){
-      return await $api.post('/logOut');
+      const rez = await $api.post('/logOut');
+      return rez;
    }
    static async refresh(){
       return await $api.post('/refresh');

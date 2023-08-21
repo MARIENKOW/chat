@@ -35,7 +35,6 @@ class User {
          return ans
       } catch (e) {
          this.setAuth(false)
-         console.log(e);
          alert(e.message)
          return e
       }
@@ -62,8 +61,7 @@ class User {
          this.setAuth(true)
       }
       catch (e) {
-         console.log(e);
-         alert(e.response.data)
+         alert(e.data)
       }
    }
 }

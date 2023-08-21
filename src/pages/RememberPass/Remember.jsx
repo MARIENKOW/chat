@@ -1,10 +1,10 @@
 import styles from './remember.module.scss';
 import Form from '../../component/Form/Form'
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import shema from '../../shema/shema.js'
 import helper from '../../helper.js'
-// import userService from '../../services/UserService';
+import userService from '../../services/UserService';
 import { Context } from '../../index';
 import { observer } from 'mobx-react-lite';
 
@@ -24,11 +24,8 @@ function Remember() {
 
   async function sendInfo(e) {
     e.preventDefault();
-    // const resp = await store.signInUser(value);
-    // if (resp.status === 200) {
-    //   navigate('/account')
-    // }
-    console.log(value);
+    const ans = await userService.rememberPassword(value)
+    console.log(ans);
   }
 
   // if (!store.isLoading) return "...loading"

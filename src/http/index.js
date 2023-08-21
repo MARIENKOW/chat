@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// export const API_URL = 'http://localhost:5000';
 export const API_URL = 'http://localhost:5000';
 
 const $api = axios.create({
@@ -15,6 +14,7 @@ $api.interceptors.request.use((config) => {
    config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
    return config;
 })
+
 $api.interceptors.response.use(config => config, async err => {
    const originalRequest = err.config;
    if (err?.response?.status === 401 && err.config && !err.config._isRetry) {
@@ -24,15 +24,18 @@ $api.interceptors.response.use(config => config, async err => {
          localStorage.setItem('accessToken', response.data);
          return await $api.request(originalRequest)
       } catch (e) {
-         throw e
+         if (e?.response?.status === 400 || e?.response?.status === 401) {
+            return err.response
+         }
+         throw e.response
       }
    }
 
-   if (err?.response?.status === 400) {
-      return err
-   }
 
-   throw err
+   if (err?.response?.status === 400 || err?.response?.status === 401) {
+      return err.response
+   }
+   throw err.response
 })
 
 export default $api;
