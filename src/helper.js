@@ -18,6 +18,9 @@ class Helper {
       else if (key === 'username') {
          if (value[key].length < 3) return true
       }
+      else if (key === 'name') {
+         if (value[key].length < 3) return true
+      }
       else if (key === 're-enter password') {
          if (value[key] !== value.password) return true
       }
@@ -34,7 +37,8 @@ class Helper {
    wrongClientValidMessage(key) {
       if (key === 'email') return 'email must be format like example@mail.com'
       if (key === 'password') return 'password must be more then 4 characters'
-      if (key === 'username') return 'password must be more then 2 characters'
+      if (key === 'username') return 'username must be more then 2 characters'
+      if (key === 'name') return 'name must be more then 2 characters'
       if (key === 're-enter password') return 're-entered password is not correct'
    }
 }

@@ -3,6 +3,11 @@
    letter-spacing: 2px;
    font-size: 14px;
    font-weight: 600;
+   // padding: 3px 0px;
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   justify-content: center;
    &:hover{
       opacity: .5;
    }

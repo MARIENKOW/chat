@@ -1,6 +1,7 @@
 import styles from './Form.module.scss'
 import Button from '../Button/Button'
 import helper from '../../helper'
+import Sending from '../Sending/Sending'
 
 export default function Login(props) {
    const inputs = props.shema ? props.shema.map((el, i) => {
@@ -29,7 +30,7 @@ export default function Login(props) {
             className={styles.form}>
             {inputs}
             {props?.err?.mainMessage ? <section className={styles.apiError}>{props?.err?.mainMessage}</section> : null}
-            <Button name={props.button} />
+            <Button name={props.button} >{props.sending?<Sending/>:null}</Button>
          </form>
       </>
    )

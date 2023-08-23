@@ -18,9 +18,9 @@ function App() {
         <Routes>
           <Route path='/' element={<OnlyLogoutUser><SignIn /></OnlyLogoutUser>} />
           <Route path='/SignUp' element={<OnlyLogoutUser><SignUp /></OnlyLogoutUser>} />
-          <Route path='/Account' element={<OnlyLoginUser><Account/></OnlyLoginUser>} />
           <Route path='/RememberSendMail' element={<OnlyLogoutUser><Remember /></OnlyLogoutUser>} />
           <Route path='/ChangePass/:link' element={<OnlyLogoutUser><ChangePass /></OnlyLogoutUser>} />
+          <Route path='/Account' element={<OnlyLoginUser><Account/></OnlyLoginUser>} />
           <Route path='*' element={<UndefinedPage/>} />
         </Routes>
       </Router>

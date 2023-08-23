@@ -2,6 +2,7 @@ import { useEffect, useContext, useState } from "react"
 import { Navigate } from 'react-router-dom'
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
+import Loading from "../component/Loading/Loading";
 
 
 function OnlyLogoutUser({ children }) {
@@ -15,7 +16,7 @@ function OnlyLogoutUser({ children }) {
       whaitAnswer()
    }, [])
 
-   if (isLoading) return '....loading'
+   if (isLoading) return <Loading/>
 
    return store.isAuth ? <Navigate to='/account' replace /> : children
 

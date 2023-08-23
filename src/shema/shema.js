@@ -17,6 +17,10 @@ const shema = {
          type: 'text'
       },
       {
+         name: 'name',
+         type: 'text'
+      },
+      {
          name: 'email',
          type: 'mail'
       },
