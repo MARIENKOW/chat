@@ -1,3 +1,5 @@
+import ChangePass from "../pages/ChangePass/ChangePass";
+
 const shema = {
    signIn: [
       {
@@ -33,6 +35,16 @@ const shema = {
          type: 'mail'
       },
 
+   ],
+   changePass:[
+      {
+         name: 'password',
+         type: 'password'
+      },
+      {
+         name: 're-enter password',
+         type: 'password'
+      },
    ]
 }
 

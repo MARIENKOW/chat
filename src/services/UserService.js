@@ -31,8 +31,16 @@ export default class AuthService {
       const response = await $api.get('/checkAuthUser');
       return response
    }
+   static async checkChangePassLink(value){
+      const response = await $api.post('/checkChangePassLink',value);
+      return response
+   }
    static async aboutUser(){
       const ans = await $api.get('/aboutUser');
+      return ans
+   }
+   static async changePassword(value){
+      const ans =await $api.post('/changePass',value)
       return ans
    }
 }

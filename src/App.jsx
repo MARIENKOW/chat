@@ -7,6 +7,7 @@ import OnlyLoginUser from './privacyCheck/OnlyLoginUser.jsx';
 import styles from './app.module.scss'
 import Remember from './pages/RememberPass/Remember.jsx'
 import UndefinedPage from './pages/404/undefinedPage.jsx'
+import ChangePass from './pages/ChangePass/ChangePass.jsx'
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path='/SignUp' element={<OnlyLogoutUser><SignUp /></OnlyLogoutUser>} />
           <Route path='/Account' element={<OnlyLoginUser><Account/></OnlyLoginUser>} />
           <Route path='/RememberSendMail' element={<OnlyLogoutUser><Remember /></OnlyLogoutUser>} />
+          <Route path='/ChangePass/:link' element={<OnlyLogoutUser><ChangePass /></OnlyLogoutUser>} />
           <Route path='*' element={<UndefinedPage/>} />
         </Routes>
       </Router>

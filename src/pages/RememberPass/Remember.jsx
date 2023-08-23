@@ -1,12 +1,10 @@
 import styles from './remember.module.scss';
 import Form from '../../component/Form/Form'
-import { Link, Navigate } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import shema from '../../shema/shema.js'
 import helper from '../../helper.js'
 import userService from '../../services/UserService';
-import { Context } from '../../index';
-import { observer } from 'mobx-react-lite';
 
 
 
@@ -14,21 +12,36 @@ function Remember() {
   const defaultValue = helper.toObjec(shema.remember);
 
   const [value, setValue] = useState(defaultValue);
-  const { store } = useContext(Context)
+  const [error, setError] = useState({ message: '', badInputs: [] });
+  const [sended,setSended] = useState(false)
 
-  useEffect(()=>{
-    store.isAuthUser()
-  },[])
+  useEffect(() => {
+    setError({ message: '', badInputs: [] })
+  }, [value])
 
-  if(store.isAuth) return <Navigate to='/account'/>
 
   async function sendInfo(e) {
     e.preventDefault();
-    const ans = await userService.rememberPassword(value)
-    console.log(ans);
+    try {
+      if (Object.values(value).includes('') || wrongValidation.length > 0 || error.length > 0) return
+
+      const ans = await userService.rememberPassword(value)
+      if (ans.status === 400) return setError({ message: 'Email Is Not Defined', badInputs: ['email'] })
+      setSended(true)
+    } catch (e) {
+      console.log(e);
+      alert('Server Error. Try  again later')
+    }
   }
 
-  // if (!store.isLoading) return "...loading"
+  if(sended) return 'check Your email'
+
+  const wrongValidation = []
+
+  for (let key in value) {
+    if (helper.checkValid(key, value)) wrongValidation.push(key)
+  }
+
 
   return (
     <section className={styles.main}>
@@ -38,6 +51,8 @@ function Remember() {
         value={value}
         handleInputChange={helper.inputChange(value, setValue)}
         onSubmit={sendInfo}
+        wrongValidation={wrongValidation}
+        err={error}
       />
       <section className={styles.links}>
         <Link to='/'>sign In</Link>
@@ -47,4 +62,4 @@ function Remember() {
   );
 }
 
-export default observer(Remember);
+export default Remember;

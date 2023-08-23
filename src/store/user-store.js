@@ -35,7 +35,7 @@ class User {
          return ans
       } catch (e) {
          this.setAuth(false)
-         alert(e.message)
+         alert('Server Error. Try again later')
          return e
       }
    }
@@ -61,7 +61,7 @@ class User {
          this.setAuth(true)
       }
       catch (e) {
-         alert(e.data)
+         alert('Server Error. Try again later')
       }
    }
 }

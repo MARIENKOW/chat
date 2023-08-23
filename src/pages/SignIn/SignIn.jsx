@@ -1,12 +1,11 @@
 import styles from './signIn.module.scss';
 import Form from '../../component/Form/Form'
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
+import { Link, } from 'react-router-dom';
+import { useContext, useState, useEffect } from 'react';
 import shema from '../../shema/shema.js'
 import helper from '../../helper.js'
 // import userService from '../../services/UserService';
 import { Context } from '../../index';
-import { observer } from 'mobx-react-lite';
 
 
 
@@ -14,24 +13,33 @@ function SignIn() {
   const defaultValue = helper.toObjec(shema.signIn);
 
   const [value, setValue] = useState(defaultValue);
-  const navigate = useNavigate();
   const { store } = useContext(Context)
+  const [error, setError] = useState({ message: '', badInputs: [],mainMessage:''});
 
-  useEffect(()=>{
-    store.isAuthUser()
-  },[])
+  useEffect(() => {
+    setError({ message: '', badInputs: [] ,mainMessage:''})
+  }, [value])
 
-  if(store.isAuth) return <Navigate to='/account'/>
+  const wrongValidation = []
+
+  for (let key in value) {
+    if (helper.checkValid(key, value)) wrongValidation.push(key)
+  }
+
 
   async function sendInfo(e) {
     e.preventDefault();
-    const resp = await store.signInUser(value);
-    if (resp.status === 200) {
-      navigate('/account')
+    if (Object.values(value).includes('') || wrongValidation.length > 0) return;
+    const ans = await store.signInUser(value);
+    if (ans.status === 400) {
+      console.log(ans);
+      if (ans.data.accNotActivated) return setError({ ...error, mainMessage: 'your account is not activated' });
+      if (ans.data.badValidation) return alert('bad Validation. Check your info');
+      if (ans.data.emailNotDefined) return setError({message:'the email is not registered',badInputs:['email']});
+      if (ans.data.passNotCorrect) return setError({message:'the password is not correct',badInputs:['password']});
     }
   }
 
-  // if (!store.isLoading) return "...loading"
 
   return (
     <section className={styles.main}>
@@ -41,6 +49,8 @@ function SignIn() {
         value={value}
         handleInputChange={helper.inputChange(value, setValue)}
         onSubmit={sendInfo}
+        wrongValidation={wrongValidation}
+        err={error}
       />
       <section className={styles.links}>
         <Link to='/SignUp'>sign up</Link>
@@ -50,4 +60,4 @@ function SignIn() {
   );
 }
 
-export default observer(SignIn);
+export default SignIn;
