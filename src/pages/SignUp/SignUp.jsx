@@ -62,7 +62,7 @@ function SignUp() {
           err={error}
           sending={sended}
           button='Sign Up' />
-        <Link to='/'>sign in</Link>
+        <Link to='chat-client/'>sign in</Link>
       </section>
     </section>
   );

@@ -16,11 +16,11 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path='/' element={<OnlyLogoutUser><SignIn /></OnlyLogoutUser>} />
-          <Route path='/SignUp' element={<OnlyLogoutUser><SignUp /></OnlyLogoutUser>} />
-          <Route path='/RememberSendMail' element={<OnlyLogoutUser><Remember /></OnlyLogoutUser>} />
-          <Route path='/ChangePass/:link' element={<OnlyLogoutUser><ChangePass /></OnlyLogoutUser>} />
-          <Route path='/Account' element={<OnlyLoginUser><Account/></OnlyLoginUser>} />
+          <Route path='chat-client/' element={<OnlyLogoutUser><SignIn /></OnlyLogoutUser>} />
+          <Route path='chat-client/SignUp' element={<OnlyLogoutUser><SignUp /></OnlyLogoutUser>} />
+          <Route path='chat-client/RememberSendMail' element={<OnlyLogoutUser><Remember /></OnlyLogoutUser>} />
+          <Route path='chat-client/ChangePass/:link' element={<OnlyLogoutUser><ChangePass /></OnlyLogoutUser>} />
+          <Route path='chat-client/Account' element={<OnlyLoginUser><Account/></OnlyLoginUser>} />
           <Route path='*' element={<UndefinedPage/>} />
         </Routes>
       </Router>

@@ -18,7 +18,7 @@ function OnlyLogoutUser({ children }) {
 
    if (isLoading) return <Loading/>
 
-   return store.isAuth ? <Navigate to='/account' replace /> : children
+   return store.isAuth ? <Navigate to='chat-client/account' replace /> : children
 
 }
 
