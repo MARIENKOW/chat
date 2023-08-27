@@ -7,34 +7,22 @@ class User {
    constructor() {
       makeAutoObservable(this)
    }
-   setAuth(val) {
-      this.isAuth = val
+   setAuth(value) {
+      this.isAuth = value
    }
    setUser(value) {
       this.user = value
    }
-   async isAuthUser() {
-      try {
-         const ans = await userService.checkAuthUser()
-         if (ans.status !== 200) return this.setAuth(false)
-         this.setAuth(true)
-         return ans
-      } catch (e) {
-         this.setAuth(false)
-      }
-   }
+
    async signInUser(value) {
 
       try {
          const ans = await userService.signIn(value)
-         if (ans.status !== 200) {
-            this.setAuth(false)
-            return ans
-         }
+         if (ans.status !== 200) return ans;
          this.setAuth(true)
+         this.setUser(ans.data.user)
          return ans
       } catch (e) {
-         this.setAuth(false)
          alert('Server Error. Try again later')
          return e
       }
@@ -44,9 +32,11 @@ class User {
          await userService.logOut();
          localStorage.removeItem('accessToken')
          this.setAuth(false)
+         this.setUser({})
       } catch (e) {
          localStorage.removeItem('accessToken')
          this.setAuth(false)
+         this.setUser({})
       }
    }
    aboutUser = async () => {

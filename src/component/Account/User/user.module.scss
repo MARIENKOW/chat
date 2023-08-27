@@ -1,0 +1,53 @@
+@import '../../../vars.module.scss';
+.user {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   padding: 5px 0px 5px 10px;
+   transition: .2s;
+   cursor: pointer;
+   &:hover{
+      background-color: #ffffff16;
+   }
+   .logo {
+      flex: 0 0 15%;
+      height: 100%;
+      aspect-ratio: 1/1;
+      img {
+         width: 100%;
+         border-radius: 99px;
+         height: 100%;
+         object-fit: cover;
+      }
+   }
+   .info {
+      flex: 0 0 85%;
+      max-width: 85%;
+      padding: 0px 10px;
+      .top {
+         display: flex;
+         justify-content: space-between;
+         align-items:end;
+         margin: 0px 0px 10px 0px;
+         .name {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+         }
+         .time {
+            color: $color2;
+         }
+      }
+      .message {
+         width: 100%;
+         max-width: 100%;
+         text-overflow: ellipsis;
+         white-space: nowrap;
+         overflow: hidden;
+         // font-weight: 600;
+         color: $color1;
+         font-size: 16px;
+         
+      }
+   }
+}

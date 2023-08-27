@@ -8,17 +8,19 @@ import Loading from "../component/Loading/Loading";
 function OnlyLogoutUser({ children }) {
    const { store } = useContext(Context)
    const [isLoading, setIsLoading] = useState(true);
+
    useEffect(() => {
       const whaitAnswer = async()=>{
          await store.aboutUser()
          setIsLoading(false)
       }
+      if(store.isAuth) return setIsLoading(false);
       whaitAnswer()
    }, [])
 
    if (isLoading) return <Loading/>
 
-   return store.isAuth ?children : <Navigate to='chat-client/' replace />
+   return store.isAuth ?children : <Navigate to='/' replace />
 
 }
 

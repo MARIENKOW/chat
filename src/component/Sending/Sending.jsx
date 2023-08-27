@@ -1,8 +1,8 @@
 import src from '../../src/sending.gif'
 
-const Sending = ()=>{
+const Sending = ({width})=>{
    return(
-      <img style={{width:'20px'}} src={src} alt="sending" />
+      <img style={{width:width ||'20px'}} src={src} alt="sending" />
    )
 }
 

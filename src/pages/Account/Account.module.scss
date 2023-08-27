@@ -1,0 +1,83 @@
+@import '../../vars.module.scss';
+
+.wrapper {
+   height: 100vh;
+   // padding: 10px 10px;
+   background-color: #181616;
+}
+.main {
+   display: flex;
+   // margin: 0 auto;
+   height: 100%;
+   min-height: 300px;
+   overflow: hidden;
+}
+.select {
+   background-color: rgb(10, 54, 52);
+   max-width: 450px;
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   border-right: 3px solid rgb(10, 54, 52);
+}
+.chat {
+   flex: 1;
+   background-color: rgb(33, 40, 45);
+}
+.search {
+   padding: 10px 10px;
+   input {
+      width: 100%;
+      background-color: transparent;
+      border: 2px solid $color1;
+      border-radius: 99px;
+      padding: 8px 15px;
+      transition: 0.2s;
+      font-weight: 600;
+      font-size: 16px;
+      color: #ffffff;
+      &::placeholder {
+         color: $color2;
+         font-weight: 500;
+         font-size: 14px;
+      }
+      &:focus {
+         border-color: #bcbcbc;
+         background-color: #ffffff1e;
+      }
+   }
+}
+.users {
+   padding: 0px 0px;
+   flex: 1;
+   overflow: hidden;
+   overflow-y: scroll;
+   &::-webkit-scrollbar {
+      border-radius: 99px;
+      width: 5px;
+      overflow: hidden;
+   }
+   &::-webkit-scrollbar-button {
+      display: none;
+   }
+   &::-webkit-scrollbar-corner {
+   }
+   &::-webkit-scrollbar-thumb {
+      background-color: #232323;
+      border-radius: 99px;
+   }
+   &::-webkit-scrollbar-track {
+   }
+   &::-webkit-scrollbar-track-piece {
+   }
+}
+.setings {
+   display: flex;
+   justify-content: center;
+   padding: 5px 10px;
+   button {
+      width: 100%;
+      background-color: rgb(102, 3, 163) !important;
+      color: #cfcfcf !important;
+   }
+}

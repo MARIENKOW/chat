@@ -10,7 +10,7 @@ function OnlyLogoutUser({ children }) {
    const [isLoading, setIsLoading] = useState(true);
    useEffect(() => {
       const whaitAnswer = async()=>{
-         await store.isAuthUser()
+         await store.aboutUser()
          setIsLoading(false)
       }
       whaitAnswer()
@@ -18,7 +18,7 @@ function OnlyLogoutUser({ children }) {
 
    if (isLoading) return <Loading/>
 
-   return store.isAuth ? <Navigate to='chat-client/account' replace /> : children
+   return store.isAuth ? <Navigate to='/account' replace /> : children
 
 }
 

@@ -57,8 +57,8 @@ function SignIn() {
           sending={sended}
         />
         <section className={styles.links}>
-          <Link to='chat-client/SignUp'>sign up</Link>
-          <Link to='chat-client/RememberSendMail'>remember password</Link>
+          <Link to='/SignUp'>sign up</Link>
+          <Link to='/RememberSendMail'>remember password</Link>
         </section>
       </section>
     </section>

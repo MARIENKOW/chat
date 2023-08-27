@@ -43,4 +43,8 @@ export default class AuthService {
       const ans =await $api.post('/changePass',value)
       return ans
    }
+   static async findUsers(value,h){
+      const ans =await $api.post('/user/searchUsers',value,h)
+      return ans
+   }
 }

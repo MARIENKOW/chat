@@ -1,18 +1,20 @@
-.wrapper{
+.wrapper {
    display: flex;
    align-items: center;
    min-height: 100vh;
 }
-.main{
+.main {
    max-width: 500px;
    margin: 0 auto;
    border: 2px solid #000;
    border-radius: 20px;
    overflow: hidden;
    padding: 20px 10px;
+   background-color: #fff;
+
    flex: 0 1 500px;
 }
-.links{
+.links {
    display: flex;
    justify-content: space-between;
    gap: 20px;
