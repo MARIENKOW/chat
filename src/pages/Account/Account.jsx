@@ -18,15 +18,19 @@ const Account = () => {
    const [isDataLoading, setIsDataLoading] = useState(false)
    const [onlineUsers, setOnlineUsers] = useState([])
    const [currentChat, setCurrentChat] = useState(null)
+   const [write, setWrite] = useState('');
+   const [newMessage, setNewMessage] = useState(null)
 
    const sock = useMemo(() => socketIo.connect('http://localhost:5000', { auth: { username: store.user.username, id: store.user.id } }), [])
 
    useEffect(() => {
       const webSocket = async () => {
          try {
-            // sock.emit('private message', { message: 'Hello', to: 152 })
+            const users = await UserService.getDataUsers({ id: store.user.id });
+            setUsers(users.data)
             sock.on('users', setOnlineUsers);
             sock.on("connect_error", (err) => alert('SystemError Try again Later'));
+            sock.on('private message', setNewMessage)
          }
          catch (e) {
             alert('SystemError Try again Later')
@@ -35,6 +39,22 @@ const Account = () => {
       webSocket()
    }, [])
 
+   useEffect(changeDataMessage, [newMessage])
+
+   function changeDataMessage() {
+      console.log(currentChat);
+      if (!newMessage) return
+      const usersCopy = users.slice()
+
+      usersCopy.forEach((el) => {
+         if (el.id === newMessage.user) {
+            if (el.message) return el.message = [...el.message, newMessage.message];
+            el.message = [newMessage.message]
+         }
+      })
+      console.log(users);
+      setUsers(usersCopy);
+   }
 
    useEffect(() => {
       const userSearch = async () => {
@@ -61,17 +81,25 @@ const Account = () => {
 
    const handleWrite = ({ target }) => {
       const main = target.closest('[data-user]')
-      if(!main) return
+      if (!main) return
       const userInfo = JSON.parse(main.dataset.user)
       if (search.length > 0) {
-         setUsers([...users, userInfo])
+         // const 
          setSearch('')
          setCurrentChat(userInfo);
+         const isOnUsers = users.find((el) => el.id === userInfo.id);
+         if (isOnUsers) return;
+         setUsers([...users, userInfo])
       } else {
          setCurrentChat(userInfo);
       }
    }
-   console.log(currentChat);
+
+   const handleSendMessage = (e) => {
+      e.preventDefault();
+      sock.emit('private message', { message: write, to: currentChat.id });
+      setWrite('');
+   }
 
    return (
       <div className={styles.wrapper}>
@@ -88,7 +116,16 @@ const Account = () => {
                </div>
             </section >
             <section className={styles.chat}>
-               {currentChat && `username : ${currentChat.username}`}
+               {currentChat && (
+                  <section className={styles.currentChat}>
+                     <div className={styles.view}>
+                        {currentChat && currentChat.message && currentChat.message.map((el, i, arr) => <div key={i}>{el.from === store.user.id ? 'you' : currentChat.username} : {el.value}</div>)}
+                     </div>
+                     <form onSubmit={handleSendMessage} className={styles.write}>
+                        <input onChange={({ target }) => setWrite(target.value)} type="text" name="write" id="write" value={write} />
+                     </form>
+                  </section>
+               )}
             </section>
          </section >
       </div >

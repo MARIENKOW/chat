@@ -12,7 +12,7 @@ const User = ({user}) => {
             <span className={styles.time}>{user.time || "22:30"}</span>
          </div>
          <p className={styles.message}>
-            {user.message || 'Hi,how are you?'}
+            {user.message && user.message.length!==0 &&  user.message[user.message.length-1].value || 'Hi,how are you?'}
          </p>
       </article>
    </div>)
