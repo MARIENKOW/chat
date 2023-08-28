@@ -1,4 +1,4 @@
-@import '../../../vars.module.scss';
+@import "../../../vars.module.scss";
 
 .user {
    width: 100%;
@@ -23,21 +23,26 @@
       padding: 10px 10px;
       .top {
          display: flex;
-         align-items:end;
+         justify-content: space-between;
+         align-items: center;
          margin: 0px 0px 10px 0px;
-         gap: 5px;
-         .username {
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-         }
-         span{
-            color: $color1;
-            font-size: 13px;
-            font-weight: 600;
+         .about {
+            display: flex;
+            align-items: end;
+            gap: 5px;
+            .username {
+               color: #fff;
+               font-size: 16px;
+               font-weight: 600;
+            }
+            span {
+               color: $color1;
+               font-size: 13px;
+               font-weight: 600;
+            }
          }
       }
-      button{
+      button {
          font-size: 12px !important;
          padding: 5px 10px !important;
       }

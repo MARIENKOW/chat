@@ -1,9 +1,10 @@
 import styles from './user.module.scss'
 
 const User = ({user}) => {
-   return (<div className={styles.user}>
+   return (<div data-user={JSON.stringify(user)} className={styles.user}>
       <div className={styles.logo}>
          <img src={user.logo || "./logo.png"} alt="logo" />
+         {user.online && <span></span>}
       </div>
       <article className={styles.info}>
          <div className={styles.top}>
