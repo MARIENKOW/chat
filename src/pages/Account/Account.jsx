@@ -113,9 +113,7 @@ const Account = () => {
       if (!main) return
       const userId = main.dataset.user
       setSearch('')
-      console.log(userId);
       setCurrentChat(+userId);
-      console.log(setCurrentChat);
    }
 
    const handleSendMessage = (e) => {
