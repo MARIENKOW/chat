@@ -41,6 +41,15 @@ class Helper {
       if (key === 'name') return 'name must be more then 2 characters'
       if (key === 're-enter password') return 're-entered password is not correct'
    }
+   showCorrectTime(user){
+      const now = new Date()
+      const lastMessageTime = user.message[user.message.length-1].time.slice(0,5)
+      const lastMessageDate = user.message[user.message.length-1].date
+      const lastMessageYear = user.message[user.message.length-1].date.slice(6);
+      const nowDate = `${`${now.getDate()}`.length !== 1 ? now.getDate() : `0${now.getDate()}`}.${`${now.getMonth()}`.length !== 1 ? now.getMonth() : `0${now.getMonth()}`}.${now.getFullYear()}`;
+      const nowYear = `${now.getFullYear()}`
+      return lastMessageDate === nowDate ? lastMessageTime :(nowYear === lastMessageYear ? lastMessageDate.slice(0,5):lastMessageDate);
+   }
 }
 
 const helper = new Helper();

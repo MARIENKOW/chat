@@ -52,4 +52,9 @@ export default class AuthService {
       const ans =await $api.post('/user/getDataUsers',value,h)
       return ans
    }
+
+   static async getUserById(value){
+      const ans =await $api.post('/user/getUserById',value)
+      return ans
+   }
 }

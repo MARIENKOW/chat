@@ -16,19 +16,21 @@ const Account = () => {
    const [source, setSource] = useState(null);
    const [dataSearch, setDataSearch] = useState([]);
    const [isDataLoading, setIsDataLoading] = useState(false)
-   const [onlineUsers, setOnlineUsers] = useState([])
+   // const [onlineUsers, setOnlineUsers] = useState([])
    const [currentChat, setCurrentChat] = useState(null)
    const [write, setWrite] = useState('');
    const [newMessage, setNewMessage] = useState(null)
 
    const sock = useMemo(() => socketIo.connect('http://localhost:5000', { auth: { username: store.user.username, id: store.user.id } }), [])
 
+   const currentUser = useMemo(() =>users.find((el) => el.id === currentChat), [currentChat,users])
+
    useEffect(() => {
       const webSocket = async () => {
          try {
             const users = await UserService.getDataUsers({ id: store.user.id });
             setUsers(users.data)
-            sock.on('users', setOnlineUsers);
+            // sock.on('users', setOnlineUsers);
             sock.on("connect_error", (err) => alert('SystemError Try again Later'));
             sock.on('private message', setNewMessage)
          }
@@ -39,20 +41,20 @@ const Account = () => {
       webSocket()
    }, [])
 
-   useEffect(changeDataMessage, [newMessage])
+   useEffect(()=>{
+      changeDataMessage()
+   }, [newMessage])
 
-   function changeDataMessage() {
-      console.log(currentChat);
+   async function changeDataMessage() {
       if (!newMessage) return
       const usersCopy = users.slice()
-
-      usersCopy.forEach((el) => {
-         if (el.id === newMessage.user) {
-            if (el.message) return el.message = [...el.message, newMessage.message];
-            el.message = [newMessage.message]
-         }
-      })
-      console.log(users);
+      const inDataUser = usersCopy.find((el) => el.id === newMessage.user);
+      if (inDataUser) {
+         inDataUser.message = [...inDataUser.message, newMessage.message];
+      }else{
+         const user  = await UserService.getUserById({id:newMessage.user});
+         usersCopy.push({...user.data,message:[newMessage.message]})
+      }
       setUsers(usersCopy);
    }
 
@@ -79,25 +81,18 @@ const Account = () => {
       userSearch()
    }, [search])
 
-   const handleWrite = ({ target }) => {
+
+   const handleSelect = ({ target }) => {
       const main = target.closest('[data-user]')
       if (!main) return
       const userInfo = JSON.parse(main.dataset.user)
-      if (search.length > 0) {
-         // const 
-         setSearch('')
-         setCurrentChat(userInfo);
-         const isOnUsers = users.find((el) => el.id === userInfo.id);
-         if (isOnUsers) return;
-         setUsers([...users, userInfo])
-      } else {
-         setCurrentChat(userInfo);
-      }
+      setSearch('')
+      setCurrentChat(userInfo.id);
    }
 
    const handleSendMessage = (e) => {
       e.preventDefault();
-      sock.emit('private message', { message: write, to: currentChat.id });
+      sock.emit('private message', { message: write, to: currentChat });
       setWrite('');
    }
 
@@ -108,7 +103,7 @@ const Account = () => {
                <div className={styles.search}>
                   <input placeholder="Search.." onChange={({ target }) => setSearch(target.value)} value={search} type="search" name="search" id="search" />
                </div>
-               <section className={styles.users} onClick={handleWrite}>
+               <section className={styles.users} onClick={handleSelect}>
                   <Choose isDataLoading={isDataLoading} search={search} users={users} dataSearch={dataSearch} />
                </section>
                <div className={styles.setings}>
@@ -119,7 +114,7 @@ const Account = () => {
                {currentChat && (
                   <section className={styles.currentChat}>
                      <div className={styles.view}>
-                        {currentChat && currentChat.message && currentChat.message.map((el, i, arr) => <div key={i}>{el.from === store.user.id ? 'you' : currentChat.username} : {el.value}</div>)}
+                        {currentUser && currentUser.message && currentUser.message.map((el, i, arr) => <div key={i}>{el.from === store.user.id ? 'you' : currentUser.username} : {el.value}</div>)}
                      </div>
                      <form onSubmit={handleSendMessage} className={styles.write}>
                         <input onChange={({ target }) => setWrite(target.value)} type="text" name="write" id="write" value={write} />
