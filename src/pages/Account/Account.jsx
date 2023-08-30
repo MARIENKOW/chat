@@ -7,6 +7,9 @@ import socketIo from 'socket.io-client'
 import UserService from '../../services/UserService'
 import axios from "axios";
 import Choose from "../../component/Account/Choose/Choose"
+import helper from "../../helper";
+import Chat from '../../component/Account/Chat/Chat'
+
 
 
 const Account = () => {
@@ -16,21 +19,41 @@ const Account = () => {
    const [source, setSource] = useState(null);
    const [dataSearch, setDataSearch] = useState([]);
    const [isDataLoading, setIsDataLoading] = useState(false)
-   // const [onlineUsers, setOnlineUsers] = useState([])
    const [currentChat, setCurrentChat] = useState(null)
    const [write, setWrite] = useState('');
    const [newMessage, setNewMessage] = useState(null)
+   const [preUsers, setPreUsers] = useState([])
 
-   const sock = useMemo(() => socketIo.connect('http://localhost:5000', { auth: { username: store.user.username, id: store.user.id } }), [])
+   const currentUser = useMemo(() => users.find((el) => el.id === currentChat), [currentChat, users])
 
-   const currentUser = useMemo(() =>users.find((el) => el.id === currentChat), [currentChat,users])
+   const sock = useMemo(() => socketIo.connect('http://localhost:5000', { auth: { username: store.user.username, id: store.user.id } }), []);
+
+   useEffect(() => {
+      sock.emit('onlineUsers', preUsers.map(el => el.id))
+      sock.on('onlineUsers', (arr) => {
+         const usersCopy = preUsers.slice();
+         helper.addOnlineUsers(usersCopy, arr)
+         setUsers(usersCopy)
+      })
+   }, [preUsers])
+
+   useEffect(() => {
+      const getDataUsers = async () => {
+         try {
+            const users = await UserService.getDataUsers({ id: store.user.id });
+            setPreUsers(users.data)
+         }
+         catch (e) {
+            alert('SystemError Try again Later')
+         }
+      }
+      getDataUsers()
+   }, []);
 
    useEffect(() => {
       const webSocket = async () => {
          try {
-            const users = await UserService.getDataUsers({ id: store.user.id });
-            setUsers(users.data)
-            // sock.on('users', setOnlineUsers);
+            if (!sock) return;
             sock.on("connect_error", (err) => alert('SystemError Try again Later'));
             sock.on('private message', setNewMessage)
          }
@@ -39,24 +62,27 @@ const Account = () => {
          }
       }
       webSocket()
-   }, [])
-
-   useEffect(()=>{
-      changeDataMessage()
-   }, [newMessage])
-
-   async function changeDataMessage() {
-      if (!newMessage) return
-      const usersCopy = users.slice()
-      const inDataUser = usersCopy.find((el) => el.id === newMessage.user);
-      if (inDataUser) {
-         inDataUser.message = [...inDataUser.message, newMessage.message];
-      }else{
-         const user  = await UserService.getUserById({id:newMessage.user});
-         usersCopy.push({...user.data,message:[newMessage.message]})
+      return () => {
+         sock.disconnect(true)
       }
-      setUsers(usersCopy);
-   }
+   }, [sock]);
+
+
+   useEffect(() => {
+      async function changeDataMessage() {
+         if (!newMessage) return
+         const usersCopy = preUsers.slice()
+         const inDataUser = usersCopy.find((el) => el.id === newMessage.user);
+         if (inDataUser) {
+            inDataUser.message = [...inDataUser.message, newMessage.message];
+         } else {
+            const user = await UserService.getUserById({ id: newMessage.user });
+            usersCopy.push({ ...user.data, message: [newMessage.message] })
+         }
+         setPreUsers(usersCopy);
+      }
+      changeDataMessage()
+   }, [newMessage]);
 
    useEffect(() => {
       const userSearch = async () => {
@@ -68,26 +94,28 @@ const Account = () => {
             setSource(src);
             setIsDataLoading(true)
             const users = await UserService.findUsers({ search: search.trim(), id: store.user.id }, { cancelToken: src.token })
-            sock.emit('findOnlineUsers', users.data)
-            sock.on('findOnlineUsers', (data) => {
-               setDataSearch(data);
+            sock.emit('findOnlineUsers', users.data.map(el => el.id))
+            sock.on('findOnlineUsers', (arr) => {
+               helper.addOnlineUsers(users.data, arr)
+               setDataSearch(users.data);
                setIsDataLoading(false)
             })
-
          } catch (e) {
             console.log(e);
+            alert('System Error, Try again later')
          }
       }
       userSearch()
-   }, [search])
-
+   }, [search]);
 
    const handleSelect = ({ target }) => {
       const main = target.closest('[data-user]')
       if (!main) return
-      const userInfo = JSON.parse(main.dataset.user)
+      const userId = main.dataset.user
       setSearch('')
-      setCurrentChat(userInfo.id);
+      console.log(userId);
+      setCurrentChat(+userId);
+      console.log(setCurrentChat);
    }
 
    const handleSendMessage = (e) => {
@@ -96,33 +124,42 @@ const Account = () => {
       setWrite('');
    }
 
+   const handleViewedMessage = () => {
+
+   }
+
+   const handleWrite = ({ target }) => {
+      if(target.value.includes("'")) return target.value = target.value.slice(-1);
+      setWrite(target.value)
+   }
+
    return (
       <div className={styles.wrapper}>
-         <section className={styles.main}>
-            <section className={styles.select}>
-               <div className={styles.search}>
-                  <input placeholder="Search.." onChange={({ target }) => setSearch(target.value)} value={search} type="search" name="search" id="search" />
-               </div>
-               <section className={styles.users} onClick={handleSelect}>
-                  <Choose isDataLoading={isDataLoading} search={search} users={users} dataSearch={dataSearch} />
-               </section>
-               <div className={styles.setings}>
-                  <Button name="logout" handleClick={store.logOut} />
-               </div>
-            </section >
-            <section className={styles.chat}>
-               {currentChat && (
-                  <section className={styles.currentChat}>
-                     <div className={styles.view}>
-                        {currentUser && currentUser.message && currentUser.message.map((el, i, arr) => <div key={i}>{el.from === store.user.id ? 'you' : currentUser.username} : {el.value}</div>)}
-                     </div>
-                     <form onSubmit={handleSendMessage} className={styles.write}>
-                        <input onChange={({ target }) => setWrite(target.value)} type="text" name="write" id="write" value={write} />
-                     </form>
+         <div className={styles.main}>
+            <header className={styles.header}>
+               logined as : {store.user.username}
+            </header>
+            <section className={styles.user}>
+               <section className={styles.select}>
+                  <div className={styles.search}>
+                     <input placeholder="Search.." onChange={({ target }) => setSearch(target.value)} value={search} type="search" name="search" id="search" />
+                  </div>
+                  <section className={styles.users} onClick={handleSelect}>
+                     <Choose isDataLoading={isDataLoading} search={search} users={users} dataSearch={dataSearch} />
                   </section>
-               )}
+                  <div className={styles.setings}>
+                     <Button name="logout" handleClick={store.logOut} />
+                  </div>
+               </section >
+               <Chat
+                  currentChat={currentChat}
+                  send={handleSendMessage}
+                  write={write}
+                  handleWrite={handleWrite}
+                  currentUser={currentUser}
+               />
             </section>
-         </section >
+         </div >
       </div >
    )
 }

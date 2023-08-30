@@ -1,52 +1,38 @@
-@import '../../vars.module.scss';
+@import "../../vars.module.scss";
 
 .wrapper {
    height: 100vh;
    // padding: 10px 10px;
-   background-color: #181616;
+   background-color: $mainBack;
 }
 .main {
-   display: flex;
-   // margin: 0 auto;
    height: 100%;
    min-height: 300px;
-   overflow: hidden;
+   padding: 10px 10px;
+   display: flex;
+   flex-direction: column;
+   .header{
+      background-color: $color3;
+      margin: 0px 0px 10px 0px;
+      border-radius: $borderR;
+      padding: 10px 10px;
+      text-align: center;
+      color: $colorBtn;
+   }
+   .user{
+      height: calc(100% - 44px);
+      display: flex;      
+      gap: 10px;
+   }
 }
 .select {
-   background-color: rgb(10, 54, 52);
+   background-color: $color3;
    max-width: 450px;
    flex: 1;
    display: flex;
    flex-direction: column;
-   border-right: 3px solid rgb(10, 54, 52);
-}
-.chat {
-   flex: 1;
-   background-color: rgb(33, 40, 45);
-   .currentChat{
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      .view{
-         flex: 1;
-         color: #fff;
-         overflow-y: scroll;
-      }
-      .write{
-         background-color:  rgb(10, 54, 52);
-         display: flex;
-         justify-content: center;
-         padding:10px 20px;
-         input{
-            width: 100%;
-            background-color: transparent;
-            border-radius: 99px;
-            border: 2px solid #fff;
-            color: #fff;
-            padding: 7px 15px;
-         }
-      }
-   }
+   // border-right: 3px solid $color3;
+   border-radius: $borderR;
 }
 .search {
    padding: 10px 10px;
@@ -98,12 +84,10 @@
 .setings {
    display: flex;
    justify-content: center;
-   padding: 5px 10px;
+   padding: 7px 7px;
    button {
       width: 100%;
-      background-color: rgb(102, 3, 163) !important;
+      background-color:$colorBtn !important;
       color: #cfcfcf !important;
    }
 }
-
-

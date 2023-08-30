@@ -50,6 +50,12 @@ class Helper {
       const nowYear = `${now.getFullYear()}`
       return lastMessageDate === nowDate ? lastMessageTime :(nowYear === lastMessageYear ? lastMessageDate.slice(0,5):lastMessageDate);
    }
+   addOnlineUsers(users,arr){
+      users.forEach(element => {
+         if (arr.includes(element.id)) return element.online = true;
+         element.online = false;
+      });
+   }
 }
 
 const helper = new Helper();

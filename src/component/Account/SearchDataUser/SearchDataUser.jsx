@@ -7,7 +7,7 @@ const SearchDataUser = ({ user }) => {
       <div className={styles.logo}>
          <img src={user.logo || "./logo.png"} alt="logo" />
       </div>
-      <article data-user={JSON.stringify(user)} className={styles.info}>
+      <article data-user={user.id} className={styles.info}>
          <div className={styles.top}>
             <div className={styles.about}>
                <h4 className={styles.username}>{user.username}</h4>

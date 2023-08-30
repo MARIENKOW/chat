@@ -1,0 +1,40 @@
+@import '../../../vars.module.scss';
+
+.article{
+
+   display: flex;
+   flex-direction: column;
+   align-items: start;
+   &:not(:last-child){
+      margin: 0px 0px 25px 0px;
+   }
+   span{
+      color: $color2;
+      margin: 0px 0px 7px 0px;
+      font-size: 12px;
+   }
+}
+.message{
+   background-color: $colorBtn;
+   display: inline-block;
+   max-width: 300px;
+   border-radius: $borderR;
+   padding: 7px 13px;
+
+}
+.unMessage{
+   background-color: #303d46;
+   display: inline-block;
+   max-width: 300px;
+   border-radius: $borderR;
+   padding: 7px 10px;
+
+}
+.time{
+   font-size: 12px;
+   margin: 0px auto 0px auto;
+   padding: 4px 0px 0px 10px;
+   color: $color2;
+   float: right;
+   clear: left;
+}

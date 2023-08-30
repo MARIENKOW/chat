@@ -4,7 +4,7 @@ import helper from '../../../helper';
 const User = ({user}) => {
    const correctTime = helper.showCorrectTime(user);
 
-   return (<div data-user={JSON.stringify(user)} className={styles.user}>
+   return (<div data-user={user.id} className={styles.user}>
       <div className={styles.logo}>
          <img src={user.logo || "./logo.png"} alt="logo" />
          {user.online && <span></span>}
