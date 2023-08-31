@@ -57,4 +57,9 @@ export default class AuthService {
       const ans =await $api.post('/user/getUserById',value)
       return ans
    }
+
+   static async addWatchedMessage(value){
+      const ans =await $api.post('/user/addWatchedMessage',value)
+      return ans
+   }
 }

@@ -1,13 +1,13 @@
-@import '../../../vars.module.scss';
+@import "../../../vars.module.scss";
 .user {
-
    width: 100%;
    display: flex;
    align-items: center;
    padding: 5px 0px 5px 10px;
-   transition: .2s;
+   transition: 0.2s;
    cursor: pointer;
-   &:hover{
+   position: relative;
+   &:hover {
       background-color: #ffffff16;
    }
    .logo {
@@ -21,7 +21,7 @@
          height: 100%;
          object-fit: cover;
       }
-      span{
+      span {
          position: absolute;
          bottom: 3px;
          right: 3px;
@@ -38,7 +38,7 @@
       .top {
          display: flex;
          justify-content: space-between;
-         align-items:end;
+         align-items: end;
          margin: 0px 0px 10px 0px;
          .name {
             color: #fff;
@@ -52,13 +52,30 @@
       .message {
          width: 100%;
          max-width: 100%;
-         text-overflow: ellipsis;
-         white-space: nowrap;
-         overflow: hidden;
-         // font-weight: 600;
-         color: $color1;
-         font-size: 16px;
-         
+         display: flex;
+         justify-content: space-between;
+         .value {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            color: $color1;
+            font-size: 16px;
+            width: calc(100% - 30px);
+         }
+      }
+      .unWatched {
+         // background-color: #00b0d7;
+         background-color: $color1;
+         border-radius: 99px;
+         height: 20px;
+         width: 20px;
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         font-size: 11px;
+         color: #000;
+         font-weight: 600;
+         padding: 2px 0px 0px 0px;
       }
    }
 }

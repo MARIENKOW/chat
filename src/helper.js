@@ -56,6 +56,23 @@ class Helper {
          element.online = false;
       });
    }
+   sortMessages = (arr,id) => {
+      if (!arr) return
+      const obj = {
+         watched: [],
+         unWatched: []
+      }
+      arr.forEach(element => {
+         if (!element.watched && obj.unWatched.length > 0) {
+            obj.unWatched.push(element)
+         } else if (!element.watched && obj.unWatched.length === 0 && element.from !== id) {
+            obj.unWatched.push(element);
+         } else {
+            return obj.watched.push(element);
+         }
+      });
+      return obj;
+   }
 }
 
 const helper = new Helper();

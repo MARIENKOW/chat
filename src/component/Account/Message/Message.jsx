@@ -13,6 +13,9 @@ const Message = ({ mess, user }) => {
    const time = messageDate === nowDate ? messageTime : (nowYear === messageYear ? messageDate.slice(0, 5) : messageDate);
    return (
       <article
+         data-from = {mess.from}
+         data-watched = {mess.watched}
+         data-id = {mess.id}
          style={{ alignItems: mess.from === store.user.id ? 'end' : 'start' }}
          className={styles.article}
       >

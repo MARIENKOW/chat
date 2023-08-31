@@ -27,8 +27,8 @@
 }
 .select {
    background-color: $color3;
-   max-width: 450px;
-   flex: 1;
+   max-width: 400px;
+   flex: 0 0 400px;
    display: flex;
    flex-direction: column;
    // border-right: 3px solid $color3;
@@ -84,10 +84,11 @@
 .setings {
    display: flex;
    justify-content: center;
-   padding: 7px 7px;
+   padding: 10px 10px;
    button {
       width: 100%;
       background-color:$colorBtn !important;
       color: #cfcfcf !important;
+      padding: 8px 0px !important;
    }
 }

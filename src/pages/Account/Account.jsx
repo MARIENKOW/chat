@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Context } from "../../index";
 import Button from "../../component/Button/Button";
 import { observer } from 'mobx-react-lite'
@@ -10,6 +10,7 @@ import Choose from "../../component/Account/Choose/Choose"
 import helper from "../../helper";
 import Chat from '../../component/Account/Chat/Chat'
 
+export const Sock = createContext({ test: 'test' })
 
 
 const Account = () => {
@@ -20,11 +21,11 @@ const Account = () => {
    const [dataSearch, setDataSearch] = useState([]);
    const [isDataLoading, setIsDataLoading] = useState(false)
    const [currentChat, setCurrentChat] = useState(null)
-   const [write, setWrite] = useState('');
    const [newMessage, setNewMessage] = useState(null)
    const [preUsers, setPreUsers] = useState([])
+   const [watchedMess, setWatchedMess] = useState(null)
 
-   const currentUser = useMemo(() => users.find((el) => el.id === currentChat), [currentChat, users])
+   const currentUser = useMemo(() => ({ ...users.find((el) => el.id === currentChat) }), [currentChat, users])
 
    const sock = useMemo(() => socketIo.connect('http://localhost:5000', { auth: { username: store.user.username, id: store.user.id } }), []);
 
@@ -36,6 +37,27 @@ const Account = () => {
          setUsers(usersCopy)
       })
    }, [preUsers])
+
+   useEffect(() => {
+      if (watchedMess === null) return;
+      const usersCopy = preUsers.slice()
+      usersCopy.forEach((user) => {
+         const userWatched = watchedMess.find((obj) => obj.from === user.id)
+         if (!userWatched) return
+         user.message.forEach(obj => {
+            if (watchedMess.find(el => el.id === obj.id)) {
+               obj.watched = true
+            }
+         })
+      })
+      setPreUsers(usersCopy)
+      // return () => {
+      //    const addWatchedMessage = async()=>{
+      //       await UserService.addWatchedMessage({id:watchedMess.map(e=>e.id)});
+      //    }
+      // }
+
+   }, [watchedMess])
 
    useEffect(() => {
       const getDataUsers = async () => {
@@ -79,6 +101,9 @@ const Account = () => {
             const user = await UserService.getUserById({ id: newMessage.user });
             usersCopy.push({ ...user.data, message: [newMessage.message] })
          }
+         if (newMessage.user === currentUser.id) {
+            // currentUser.
+         }
          setPreUsers(usersCopy);
       }
       changeDataMessage()
@@ -116,49 +141,35 @@ const Account = () => {
       setCurrentChat(+userId);
    }
 
-   const handleSendMessage = (e) => {
-      e.preventDefault();
-      sock.emit('private message', { message: write, to: currentChat });
-      setWrite('');
-   }
-
-   const handleViewedMessage = () => {
-
-   }
-
-   const handleWrite = ({ target }) => {
-      if(target.value.includes("'")) return target.value = target.value.slice(-1);
-      setWrite(target.value)
-   }
 
    return (
-      <div className={styles.wrapper}>
-         <div className={styles.main}>
-            <header className={styles.header}>
-               logined as : {store.user.username}
-            </header>
-            <section className={styles.user}>
-               <section className={styles.select}>
-                  <div className={styles.search}>
-                     <input placeholder="Search.." onChange={({ target }) => setSearch(target.value)} value={search} type="search" name="search" id="search" />
-                  </div>
-                  <section className={styles.users} onClick={handleSelect}>
-                     <Choose isDataLoading={isDataLoading} search={search} users={users} dataSearch={dataSearch} />
-                  </section>
-                  <div className={styles.setings}>
-                     <Button name="logout" handleClick={store.logOut} />
-                  </div>
-               </section >
-               <Chat
-                  currentChat={currentChat}
-                  send={handleSendMessage}
-                  write={write}
-                  handleWrite={handleWrite}
-                  currentUser={currentUser}
-               />
-            </section>
+      <Sock.Provider value={sock}>
+         <div className={styles.wrapper}>
+            <div className={styles.main}>
+               <header className={styles.header}>
+                  logined as : {store.user.username}
+               </header>
+               <section className={styles.user}>
+                  <section className={styles.select}>
+                     <div className={styles.search}>
+                        <input placeholder="Search.." onChange={({ target }) => setSearch(target.value)} value={search} type="search" name="search" id="search" />
+                     </div>
+                     <section className={styles.users} onClick={handleSelect}>
+                        <Choose isDataLoading={isDataLoading} search={search} users={users} dataSearch={dataSearch} />
+                     </section>
+                     <div className={styles.setings}>
+                        <Button name="logout" handleClick={store.logOut} />
+                     </div>
+                  </section >
+                  {currentChat && (<Chat
+                     setWatchedMess={setWatchedMess}
+                     currentChat={currentChat}
+                     currentUser={currentUser}
+                  />)}
+               </section>
+            </div >
          </div >
-      </div >
+      </Sock.Provider>
    )
 }
 
