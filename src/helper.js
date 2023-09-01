@@ -41,23 +41,23 @@ class Helper {
       if (key === 'name') return 'name must be more then 2 characters'
       if (key === 're-enter password') return 're-entered password is not correct'
    }
-   showCorrectTime(user){
+   showCorrectTime(user) {
       const now = new Date()
-      const lastMessageTime = user.message[user.message.length-1].time.slice(0,5)
-      const lastMessageDate = user.message[user.message.length-1].date
-      const lastMessageYear = user.message[user.message.length-1].date.slice(6);
+      const lastMessageTime = user.message[user.message.length - 1].time.slice(0, 5)
+      const lastMessageDate = user.message[user.message.length - 1].date
+      const lastMessageYear = user.message[user.message.length - 1].date.slice(6);
       const nowDate = `${`${now.getDate()}`.length !== 1 ? now.getDate() : `0${now.getDate()}`}.${`${now.getMonth()}`.length !== 1 ? now.getMonth() : `0${now.getMonth()}`}.${now.getFullYear()}`;
       const nowYear = `${now.getFullYear()}`
-      return lastMessageDate === nowDate ? lastMessageTime :(nowYear === lastMessageYear ? lastMessageDate.slice(0,5):lastMessageDate);
+      return lastMessageDate === nowDate ? lastMessageTime : (nowYear === lastMessageYear ? lastMessageDate.slice(0, 5) : lastMessageDate);
    }
-   addOnlineUsers(users,arr){
+   addOnlineUsers(users, arr) {
       users.forEach(element => {
          if (arr.includes(element.id)) return element.online = true;
          element.online = false;
       });
    }
-   sortMessages = (arr,id) => {
-      if (!arr) return
+   sortMessages = (arr, id) => {
+      if (!arr) return {watched:[],unWatched:[]}
       const obj = {
          watched: [],
          unWatched: []
@@ -73,6 +73,13 @@ class Helper {
       });
       return obj;
    }
+   unWatchedMessages = (unWatched, id) => [...unWatched.current.children].filter((el) => {
+      if (!el.dataset.from) return
+      const from = +el.dataset.from
+      const watched = +el.dataset.watched
+      if (from !== id && !watched) return true
+   })
+
 }
 
 const helper = new Helper();

@@ -23,11 +23,16 @@ const Account = () => {
    const [currentChat, setCurrentChat] = useState(null)
    const [newMessage, setNewMessage] = useState(null)
    const [preUsers, setPreUsers] = useState([])
-   const [watchedMess, setWatchedMess] = useState(null)
+   const [watchedMess, setWatchedMess] = useState([])
+   const [currentMessages,setCurrentMessages] = useState([]);
 
-   const currentUser = useMemo(() => ({ ...users.find((el) => el.id === currentChat) }), [currentChat, users])
+   const currentUser = useMemo(() => (users.find((el) => el.id === currentChat)), [users, currentChat])
 
    const sock = useMemo(() => socketIo.connect('http://localhost:5000', { auth: { username: store.user.username, id: store.user.id } }), []);
+
+   useEffect(()=>{
+      setCurrentMessages([]);
+   },[currentChat])
 
    useEffect(() => {
       sock.emit('onlineUsers', preUsers.map(el => el.id))
@@ -51,12 +56,6 @@ const Account = () => {
          })
       })
       setPreUsers(usersCopy)
-      // return () => {
-      //    const addWatchedMessage = async()=>{
-      //       await UserService.addWatchedMessage({id:watchedMess.map(e=>e.id)});
-      //    }
-      // }
-
    }, [watchedMess])
 
    useEffect(() => {
@@ -89,7 +88,6 @@ const Account = () => {
       }
    }, [sock]);
 
-
    useEffect(() => {
       async function changeDataMessage() {
          if (!newMessage) return
@@ -97,14 +95,15 @@ const Account = () => {
          const inDataUser = usersCopy.find((el) => el.id === newMessage.user);
          if (inDataUser) {
             inDataUser.message = [...inDataUser.message, newMessage.message];
+            setUsers(usersCopy);
          } else {
             const user = await UserService.getUserById({ id: newMessage.user });
             usersCopy.push({ ...user.data, message: [newMessage.message] })
+            setPreUsers(usersCopy);
          }
-         if (newMessage.user === currentUser.id) {
-            // currentUser.
+         if(newMessage.user === currentChat){
+            setCurrentMessages([...currentMessages,newMessage.message]);
          }
-         setPreUsers(usersCopy);
       }
       changeDataMessage()
    }, [newMessage]);
@@ -162,7 +161,11 @@ const Account = () => {
                      </div>
                   </section >
                   {currentChat && (<Chat
+                     // watchedMess={watchedMess}
+                     messageLength={currentUser?.message?.length}
                      setWatchedMess={setWatchedMess}
+                     currentMessages = {currentMessages}
+                     newMessage = {newMessage}
                      currentChat={currentChat}
                      currentUser={currentUser}
                   />)}
