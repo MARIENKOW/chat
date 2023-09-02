@@ -6,25 +6,26 @@ import helper from '../../../helper';
 import { Sock } from '../../../pages/Account/Account';
 import { observer } from 'mobx-react-lite';
 import UserService from '../../../services/UserService'
+import Online from '../Online/Online';
 
 
-const Chat = ({currentMessages, messageLength, setWatchedMess, currentUser, currentChat }) => {
+const Chat = ({ currentOnline,currentMessages, setWatchedMess, currentUser, currentChat }) => {
    const { store } = useContext(Context);
    const sock = useContext(Sock)
    const [write, setWrite] = useState('');
    const view = useRef()
    const unWatched = useRef()
    const watched = useRef()
-   const sortedMessage = useMemo(() => helper.sortMessages(currentUser?.message, store.user.id), [ currentChat]);
-   const liveUnWatched = useMemo(() =>{
-      if(currentMessages.length === 0){
+   const sortedMessage = useMemo(() => helper.sortMessages(currentUser?.message, store.user.id), [currentChat]);
+   const liveUnWatched = useMemo(() => {
+      if (currentMessages.length === 0) {
          return [...sortedMessage.unWatched];
       }
-      return [...sortedMessage.unWatched,...currentMessages]
-   }, [currentMessages,sortedMessage])
+      return [...sortedMessage.unWatched, ...currentMessages]
+   }, [currentMessages, sortedMessage])
 
    useEffect(() => {
-      if(currentMessages.length === 0) return;
+      if (currentMessages.length === 0) return;
       const scroll = view.current.scrollHeight
       const wrapp = view.current.clientHeight
       if (currentMessages[currentMessages.length - 1].from !== store.user.id && view.current.scrollTop + 100 < scroll - wrapp) {
@@ -60,7 +61,7 @@ const Chat = ({currentMessages, messageLength, setWatchedMess, currentUser, curr
          const toSend = []
          unMessages.forEach((el) => {
             const bot = el.getBoundingClientRect().top;
-            if (bot + 50 < point) {
+            if (bot + 30 < point) {
                const isAdded = cache.find(e => e.id === +el.dataset.id);
                if (!isAdded) {
                   toSend.push({ id: +el.dataset.id, from: +el.dataset.from })
@@ -91,26 +92,38 @@ const Chat = ({currentMessages, messageLength, setWatchedMess, currentUser, curr
 
    const handleSendMessage = (e) => {
       e.preventDefault();
+      if(write.length === 0) return;
       sock.emit('private message', { message: write, to: currentChat });
       setWrite('');
    }
 
    const handleWrite = ({ target }) => {
-      if (target.value.includes("'")) return target.value = target.value.slice(-1);
+      if (target.value.includes("'") || target.value.length>800) return
       setWrite(target.value)
    }
    return (<section className={styles.chat}>
       {currentChat && (
          <section className={styles.currentChat}>
-            <div ref={view} className={styles.view}>
-               <section ref={watched} className={styles.watched}>
-                  {sortedMessage?.watched?.map((el, i, arr) => <Message key={i} mess={el} user={currentUser} />)}
+            <div className={styles.wrapper}>
+               <section className={styles.userInfo}>
+                  <div className={styles.logo}>
+                     <img src={currentUser?.logo || "./logo.png"} alt="logo" />
+                  </div>
+                  <div className={styles.current}>
+                     <article>{currentUser?.username}</article>
+                     <span>{currentUser&&(currentOnline?<Online/>:'offline')}</span>
+                  </div>
                </section>
-               {liveUnWatched?.length > 0 && (
-                  <section ref={unWatched} className={styles.unWatched}>
-                     {sortedMessage.unWatched.length>0 && <h3>new message</h3>}
-                     {liveUnWatched?.map((el, i, arr) => <Message key={i} mess={el} user={currentUser} />)}
-                  </section>)}
+               <div ref={view} className={styles.view}>
+                  <section ref={watched} className={styles.watched}>
+                     {sortedMessage?.watched?.map((el, i, arr) => <Message prevMess={arr[i - 1]} nextMess={arr[i + 1]} key={i} mess={el} user={currentUser} />)}
+                  </section>
+                  {liveUnWatched?.length > 0 && (
+                     <section ref={unWatched} className={styles.unWatched}>
+                        {sortedMessage.unWatched.length > 0 && <h3>new message</h3>}
+                        {liveUnWatched?.map((el, i, arr) => <Message key={i} prevMess={arr[i - 1]} nextMess={arr[i + 1]} mess={el} user={currentUser} />)}
+                     </section>)}
+               </div>
             </div>
             <form
                onSubmit={handleSendMessage}

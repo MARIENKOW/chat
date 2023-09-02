@@ -6,6 +6,11 @@ class Helper {
    inputChange = (value, setValue) => {
       return ({ target }) => {
          const { value: inputValue, id } = target;
+         if (id === 'username' && inputValue.length > 15) return
+         if (id === 'email' && inputValue.length > 45) return
+         if (id === 'name' && inputValue.length > 15) return
+         if (id === 'password' && inputValue.length > 30) return
+         if (id === 're-enter password' && inputValue.length > 30) return
          setValue({ ...value, [id]: inputValue });
       }
    }
@@ -57,7 +62,7 @@ class Helper {
       });
    }
    sortMessages = (arr, id) => {
-      if (!arr) return {watched:[],unWatched:[]}
+      if (!arr) return { watched: [], unWatched: [] }
       const obj = {
          watched: [],
          unWatched: []

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Context } from "../../index";
 import Button from "../../component/Button/Button";
 import { observer } from 'mobx-react-lite'
@@ -24,17 +24,18 @@ const Account = () => {
    const [newMessage, setNewMessage] = useState(null)
    const [preUsers, setPreUsers] = useState([])
    const [watchedMess, setWatchedMess] = useState([])
-   const [currentMessages,setCurrentMessages] = useState([]);
+   const [currentMessages, setCurrentMessages] = useState([]);
 
    const currentUser = useMemo(() => (users.find((el) => el.id === currentChat)), [users, currentChat])
 
    const sock = useMemo(() => socketIo.connect('http://localhost:5000', { auth: { username: store.user.username, id: store.user.id } }), []);
 
-   useEffect(()=>{
+   useEffect(() => {
       setCurrentMessages([]);
-   },[currentChat])
+   }, [currentChat])
 
    useEffect(() => {
+      if(isDataLoading) setIsDataLoading(false)
       sock.emit('onlineUsers', preUsers.map(el => el.id))
       sock.on('onlineUsers', (arr) => {
          const usersCopy = preUsers.slice();
@@ -61,6 +62,7 @@ const Account = () => {
    useEffect(() => {
       const getDataUsers = async () => {
          try {
+            setIsDataLoading(true)
             const users = await UserService.getDataUsers({ id: store.user.id });
             setPreUsers(users.data)
          }
@@ -69,6 +71,9 @@ const Account = () => {
          }
       }
       getDataUsers()
+      return () => {
+         sock.disconnect(true)
+      }
    }, []);
 
    useEffect(() => {
@@ -83,9 +88,6 @@ const Account = () => {
          }
       }
       webSocket()
-      return () => {
-         sock.disconnect(true)
-      }
    }, [sock]);
 
    useEffect(() => {
@@ -101,8 +103,8 @@ const Account = () => {
             usersCopy.push({ ...user.data, message: [newMessage.message] })
             setPreUsers(usersCopy);
          }
-         if(newMessage.user === currentChat){
-            setCurrentMessages([...currentMessages,newMessage.message]);
+         if (newMessage.user === currentChat) {
+            setCurrentMessages([...currentMessages, newMessage.message]);
          }
       }
       changeDataMessage()
@@ -111,7 +113,7 @@ const Account = () => {
    useEffect(() => {
       const userSearch = async () => {
          try {
-            if (search.length < 1) return setDataSearch([])
+            if (search.length < 1) return
             if (source) source.cancel();
 
             const src = axios.CancelToken.source()
@@ -126,7 +128,6 @@ const Account = () => {
             })
          } catch (e) {
             console.log(e);
-            alert('System Error, Try again later')
          }
       }
       userSearch()
@@ -146,28 +147,29 @@ const Account = () => {
          <div className={styles.wrapper}>
             <div className={styles.main}>
                <header className={styles.header}>
-                  logined as : {store.user.username}
+                  <article>
+                     logined as : {store.user.username}
+                  </article>
+                  <Button name="logout" handleClick={store.logOut} />
                </header>
                <section className={styles.user}>
                   <section className={styles.select}>
                      <div className={styles.search}>
-                        <input placeholder="Search.." onChange={({ target }) => setSearch(target.value)} value={search} type="search" name="search" id="search" />
+                        <input placeholder="Search.." onChange={({ target }) => {
+                           if(target.value.length>15) return 
+                           setSearch(target.value)
+                        }} value={search} type="search" name="search" id="search" />
                      </div>
                      <section className={styles.users} onClick={handleSelect}>
                         <Choose isDataLoading={isDataLoading} search={search} users={users} dataSearch={dataSearch} />
                      </section>
-                     <div className={styles.setings}>
-                        <Button name="logout" handleClick={store.logOut} />
-                     </div>
                   </section >
                   {currentChat && (<Chat
-                     // watchedMess={watchedMess}
-                     messageLength={currentUser?.message?.length}
                      setWatchedMess={setWatchedMess}
-                     currentMessages = {currentMessages}
-                     newMessage = {newMessage}
+                     currentMessages={currentMessages}
                      currentChat={currentChat}
                      currentUser={currentUser}
+                     currentOnline={currentUser?.online}
                   />)}
                </section>
             </div >

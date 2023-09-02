@@ -1,52 +1,91 @@
-@import '../../../vars.module.scss';
+@import "../../../vars.module.scss";
 
 .chat {
    flex: 1;
    border-radius: $borderR;
    .currentChat {
-      gap: 10px;
       height: 100%;
       display: flex;
       flex-direction: column;
-      .view {
-         background-color:$color4;
-         padding: 10px;
+      background-color: $color4;
+      border-radius: $borderR;
+      overflow: hidden;
+      .wrapper {
+         height: calc(100% - 50px);
          flex: 1;
-         color: #fff;
-         overflow-y: scroll;
+         display: flex;
+         flex-direction: column;
+         background-color: $color4;
          border-radius: $borderR;
-         border: 3px solid $color4;
-         &::-webkit-scrollbar {
-            border-radius: 99px;
-            width: 4px;
-            overflow: hidden;
+         overflow: hidden;
+         .userInfo {
+            padding: 5px 10px;
+            border-bottom: 2px solid $mainBack;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            .logo {
+               height: 35px;
+               width: 35px;
+               border-radius: 99px;
+               overflow: hidden;
+               img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+               }
+            }
+            .current {
+               font-size: 16px;
+               color: #fff;
+               display: flex;
+               flex-direction: column;
+               gap: 5px;
+               span {
+                  font-size: 12px;
+                  color: $color1;
+               }
+            }
          }
-         &::-webkit-scrollbar-button {
-            display: none;
-         }
-         &::-webkit-scrollbar-corner {
-         }
-         &::-webkit-scrollbar-thumb {
-            background-color:$color2;
-            border-radius: 99px;
-         }
-         &::-webkit-scrollbar-track {
-         }
-         &::-webkit-scrollbar-track-piece {
-            margin: 20px 0px;
-         }
-         .watched{
-
-         }
-         .unWatched{
-            h3{
-               text-align: center;
-               font-size: 14px;
-               color: $color2;
-               text-transform: capitalize;
-               padding: 5px 0px;
-               margin: 10px 0px;
-               background-color: $mainBack;
+         .view {
+            flex: 1;
+            padding: 10px;
+            height: 100%;
+            color: #fff;
+            overflow-y: scroll;
+            border-right: 3px solid $color4;
+            // border: 3px solid $color4;
+            &::-webkit-scrollbar {
+               border-radius: 99px;
+               width: 4px;
+               overflow: hidden;
+            }
+            &::-webkit-scrollbar-button {
+               display: none;
+            }
+            &::-webkit-scrollbar-corner {
+            }
+            &::-webkit-scrollbar-thumb {
+               background-color: $color2;
+               border-radius: 99px;
+            }
+            &::-webkit-scrollbar-track {
+            }
+            &::-webkit-scrollbar-track-piece {
+               margin: 5px 0 20px 0px;
+            }
+            .watched {
+            }
+            .unWatched {
+               h3 {
+                  text-align: center;
+                  font-size: 14px;
+                  color: $color2;
+                  text-transform: capitalize;
+                  padding: 5px 0px;
+                  margin: 10px 0px;
+                  background-color: $mainBack;
+               }
             }
          }
       }
@@ -55,12 +94,15 @@
          display: flex;
          justify-content: center;
          padding: 10px 20px;
-         border-radius: $borderR;
+         height: 50px;
+         border-top: 2px solid $mainBack;
+
          input {
             width: 100%;
             background-color: transparent;
             border-radius: 99px;
-            border: 2px solid #fff;
+            height: 100%;
+            border: 2px solid $color1;
             color: #fff;
             padding: 7px 15px;
          }
