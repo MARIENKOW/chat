@@ -1,11 +1,12 @@
 @import '../../../vars.module.scss';
 
 .online{
-   color: #fff;
+   color: #cccccc !important;
    display: flex;
    align-items: center;
    gap: 5px;
    font-size: 12px;
+   justify-content: center;
    span{
       display: inline-block;
       width: 7px;

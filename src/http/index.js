@@ -1,6 +1,7 @@
 import axios from 'axios';
-
-export const API_URL = 'http://localhost:5000';
+import config from '../config';
+console.log(config);
+export const API_URL = config.SERVER_API;
 
 const $api = axios.create({
    baseURL: API_URL,

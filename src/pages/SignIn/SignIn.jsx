@@ -1,7 +1,7 @@
 import styles from './signIn.module.scss';
 import Form from '../../component/Form/Form'
 import { Link } from 'react-router-dom';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useMemo } from 'react';
 import shema from '../../shema/shema.js'
 import helper from '../../helper.js'
 import { Context } from '../../index';
@@ -9,7 +9,7 @@ import { Context } from '../../index';
 
 
 function SignIn() {
-  const defaultValue = helper.toObjec(shema.signIn);
+  const defaultValue = useMemo(()=>helper.toObjec(shema.signIn),[]);
 
   const [value, setValue] = useState(defaultValue);
   const { store } = useContext(Context)

@@ -1,7 +1,9 @@
+@import '../../vars.module.scss'; 
 .btn{
    transition: .2s;
    letter-spacing: 2px;
    font-size: 14px;
+   background-color: $colorBtn;
    font-weight: 600;
    // padding: 3px 0px;
    display: flex;
