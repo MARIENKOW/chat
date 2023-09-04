@@ -13,7 +13,6 @@ const Chat = ({ sock, handleBack, currentMessages, currentChat }) => {
    const { store } = useContext(Context);
    const { users, setUsers } = useContext(Users)
    const [write, setWrite] = useState('');
-   const [watchedMess, setWatchedMess] = useState([])
    const view = useRef()
    const unWatched = useRef()
    const watched = useRef()
@@ -21,14 +20,13 @@ const Chat = ({ sock, handleBack, currentMessages, currentChat }) => {
 
    const sortedMessage = useMemo(() => helper.sortMessages(currentUser?.message, store.user.id), [currentChat]);
 
-   
    const liveUnWatched = useMemo(() => {
       if (currentMessages.length === 0) {
          return [...sortedMessage.unWatched];
       }
       return [...sortedMessage.unWatched, ...currentMessages]
    }, [currentMessages, sortedMessage])
-   
+
    const usersAllUnreadMess = useMemo(() => users.reduce((acc, el) => {
       return acc + el.message.reduce((acc, el) => {
          if (el.from !== store.user.id && !el.watched) return ++acc;
@@ -36,20 +34,6 @@ const Chat = ({ sock, handleBack, currentMessages, currentChat }) => {
       }, 0)
    }, 0), [users])
 
-   useEffect(() => {
-      if (watchedMess === null) return;
-      const usersCopy = users.slice()
-      usersCopy.forEach((user) => {
-         const userWatched = watchedMess.find((obj) => obj.from === user.id)
-         if (!userWatched) return
-         user.message.forEach(obj => {
-            if (watchedMess.find(el => el.id === obj.id)) {
-               obj.watched = true
-            }
-         })
-      })
-      setUsers(usersCopy)
-   }, [watchedMess])
 
 
    useEffect(() => {
@@ -98,7 +82,17 @@ const Chat = ({ sock, handleBack, currentMessages, currentChat }) => {
          const watchedMessage = async () => {
             try {
                await UserService.addWatchedMessage({ id: toSend.map(el => el.id) });
-               setWatchedMess([...cache])
+               const usersCopy = users.slice()
+               usersCopy.forEach((user) => {
+                  const userWatched = cache.find((obj) => obj.from === user.id)
+                  if (!userWatched) return
+                  user.message.forEach(obj => {
+                     if (cache.find(el => el.id === obj.id)) {
+                        obj.watched = true
+                     }
+                  })
+               })
+               setUsers(usersCopy)
             } catch (e) {
                alert('SystemError, Try again later');
             }

@@ -22,7 +22,10 @@ const Account = () => {
    const [wrapperHeight, setWrapperHeigh] = useState(null)
    const wrapper = useRef()
    const [users, setUsers] = usersData;
+
    const sock = useMemo(() => socketIo.connect(config.SERVER_API, { auth: { username: store.user.username, id: store.user.id } }), []);
+
+   const [preUsers, setPreUsers] = useState([]);
 
    useEffect(() => {
       setCurrentMessages([]);
@@ -48,13 +51,21 @@ const Account = () => {
 
    useEffect(() => {
       sock.on("connect_error", connectionError);
-      sock.on('private message', newMessages)
       return () => {
          sock.off("connect_error", connectionError);
-         sock.off('private message', newMessages)
          sock.disconnect(true)
       }
    }, [sock]);
+
+   useEffect(() => {
+      sock.on('private message', newMessages)
+      sock.on('onlineUsers', takeUsersOnline)
+      return () => {
+         sock.off('private message', newMessages)
+         sock.off('onlineUsers', takeUsersOnline)
+
+      }
+   }, [users, currentMessages]);
 
    const connectionError = (err) => alert('SystemError Try again Later')
 
@@ -67,15 +78,18 @@ const Account = () => {
       } else {
          const user = await UserService.getUserById({ id: newMessage.user });
          usersCopy.push({ ...user.data, message: [newMessage.message] })
+         setUsers(usersCopy)
          sock.emit('onlineUsers', usersCopy.map(el => el.id))
-         sock.on('onlineUsers', (arr) => {
-            helper.addOnlineUsers(usersCopy, arr)
-            setUsers(usersCopy)
-         })
       }
       if (newMessage.user === currentChat) {
          setCurrentMessages([...currentMessages, newMessage.message]);
       }
+   }
+
+   const takeUsersOnline = (arr) => {
+      const usersCopy = users.slice();
+      helper.addOnlineUsers(usersCopy, arr)
+      setUsers(usersCopy)
    }
 
    function handleBack() {
@@ -95,6 +109,7 @@ const Account = () => {
                         currentMessages={currentMessages}
                         currentChat={currentChat}
                      />) : (<SelectUsers
+                        setPreUsers={setPreUsers}
                         setCurrentChat={setCurrentChat}
                         sock={sock}
                      />)}
@@ -112,6 +127,7 @@ const Account = () => {
                <Header />
                <section className={styles.user}>
                   <SelectUsers
+                     setPreUsers={setPreUsers}
                      sock={sock}
                      setCurrentChat={setCurrentChat}
                   />

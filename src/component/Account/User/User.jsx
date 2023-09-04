@@ -7,7 +7,6 @@ const User = ({ user }) => {
    const { store } = useContext(Context)
 
    const correctTime = helper.showCorrectTime(user);
-
    const countUnWatched = user?.message.reduce((acc, el) => {
       if (el.from !== store.user.id && !el.watched) return ++acc;
       return acc
